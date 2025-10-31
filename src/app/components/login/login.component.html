@@ -1,0 +1,31 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Sign in to Retroboard</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ng-container *ngIf="!linkSent; else linkSentMessage">
+        <p class="description">Enter your email to receive a magic link for sign in</p>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="email" placeholder="your@email.com">
+        </mat-form-field>
+      </ng-container>
+      <ng-template #linkSentMessage>
+        <div class="success-message">
+          <p><strong>Magic link sent!</strong></p>
+          <p>Check your email and click the link to sign in.</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+    <mat-card-actions>
+      <ng-container *ngIf="!linkSent">
+        <button mat-raised-button color="primary" (click)="sendMagicLink()" [disabled]="loading">
+          <span *ngIf="!loading">Send Magic Link</span>
+          <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+        </button>
+      </ng-container>
+      <button mat-button (click)="goHome()">Back to Home</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
