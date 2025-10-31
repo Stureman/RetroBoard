@@ -1,0 +1,52 @@
+<mat-toolbar color="primary">
+  <span>Retroboard</span>
+  <span class="spacer"></span>
+  <ng-container *ngIf="user$ | async as user; else loginButton">
+    <span>{{ user.email }}</span>
+    <button mat-icon-button (click)="logout()">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </ng-container>
+  <ng-template #loginButton>
+    <button mat-button (click)="navigateToLogin()">Login</button>
+  </ng-template>
+</mat-toolbar>
+
+<div class="container">
+  <div class="hero">
+    <h1>Welcome to Retroboard</h1>
+    <p>Collaborate with your team in retrospectives</p>
+  </div>
+
+  <div class="actions">
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-card-title>Create New Board</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Board Name</mat-label>
+          <input matInput [(ngModel)]="boardName" placeholder="Sprint 42 Retrospective">
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="createBoard()">Create Board</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-card-title>Join Existing Board</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Board Code</mat-label>
+          <input matInput [(ngModel)]="boardCode" placeholder="ABC123" maxlength="6">
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="accent" (click)="joinBoard()">Join Board</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="verify-container">
+  <mat-card class="verify-card">
+    <mat-card-content>
+      <ng-container *ngIf="verifying">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Verifying your magic link...</p>
+      </ng-container>
+      <ng-container *ngIf="!verifying && !error">
+        <p class="success">✓ Successfully signed in!</p>
+        <p>Redirecting to home...</p>
+      </ng-container>
+      <ng-container *ngIf="error">
+        <p class="error">Failed to verify magic link.</p>
+        <p>Please try logging in again.</p>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</div>
