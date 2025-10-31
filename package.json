@@ -1,7 +1,7 @@
 {
   "name": "retroboard",
   "version": "1.0.0",
-  "description": "An lightweight retroboard app",
+  "description": "A lightweight retroboard app",
   "main": "index.js",
   "scripts": {
     "ng": "ng",

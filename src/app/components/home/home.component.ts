@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BoardService } from '../../services/board.service';
 
@@ -22,7 +24,8 @@ import { BoardService } from '../../services/board.service';
     MatInputModule,
     MatFormFieldModule,
     MatToolbarModule,
-    MatIconModule
+    MatIconModule,
+    MatSnackBarModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -31,6 +34,7 @@ export class HomeComponent {
   private authService = inject(AuthService);
   private boardService = inject(BoardService);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   boardName = '';
   boardCode = '';
@@ -47,12 +51,13 @@ export class HomeComponent {
 
     try {
       const boardId = await this.boardService.createBoard(this.boardName, user.email);
-      const board = await this.boardService.getBoardById(boardId).toPromise();
+      const board = await firstValueFrom(this.boardService.getBoardById(boardId));
       if (board) {
         this.router.navigate(['/board', board.code]);
       }
     } catch (error) {
       console.error('Error creating board:', error);
+      this.snackBar.open('Error creating board. Please try again.', 'Close', { duration: 3000 });
     }
   }
 
@@ -70,10 +75,11 @@ export class HomeComponent {
       if (board) {
         this.router.navigate(['/board', board.code]);
       } else {
-        alert('Board not found');
+        this.snackBar.open('Board not found', 'Close', { duration: 3000 });
       }
     } catch (error) {
       console.error('Error joining board:', error);
+      this.snackBar.open('Error joining board. Please try again.', 'Close', { duration: 3000 });
     }
   }
 

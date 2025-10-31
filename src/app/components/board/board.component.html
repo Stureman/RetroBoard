@@ -14,10 +14,10 @@
 </mat-toolbar>
 
 <div class="board-container">
-  <div class="board-header" *ngIf="isAdmin">
+  <div class="board-header" *ngIf="isAdmin && board">
     <div class="admin-controls">
       <mat-slide-toggle 
-        [(ngModel)]="board!.cardsVisible" 
+        [(ngModel)]="board.cardsVisible" 
         (change)="toggleVisibility()"
         color="primary">
         Cards Visible to All

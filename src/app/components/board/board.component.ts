@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BoardService } from '../../services/board.service';
@@ -31,7 +32,8 @@ import { AddLaneDialogComponent } from './add-lane-dialog/add-lane-dialog.compon
     MatIconModule,
     MatChipsModule,
     MatSlideToggleModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
@@ -42,6 +44,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
   private destroy$ = new Subject<void>();
 
   board: Board | null = null;
@@ -63,7 +66,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     // Load board
     this.board = await this.boardService.getBoardByCode(code);
     if (!this.board) {
-      alert('Board not found');
+      this.snackBar.open('Board not found', 'Close', { duration: 3000 });
       this.router.navigate(['/home']);
       return;
     }
@@ -143,7 +146,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   copyBoardCode() {
     if (this.board) {
       navigator.clipboard.writeText(this.board.code);
-      alert('Board code copied to clipboard!');
+      this.snackBar.open('Board code copied to clipboard!', 'Close', { duration: 2000 });
     }
   }
 

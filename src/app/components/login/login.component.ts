@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -19,7 +20,8 @@ import { AuthService } from '../../services/auth.service';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -27,6 +29,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private snackBar = inject(MatSnackBar);
 
   email = '';
   loading = false;
@@ -41,7 +44,7 @@ export class LoginComponent {
       this.linkSent = true;
     } catch (error) {
       console.error('Error sending magic link:', error);
-      alert('Failed to send magic link. Please try again.');
+      this.snackBar.open('Failed to send magic link. Please try again.', 'Close', { duration: 5000 });
     } finally {
       this.loading = false;
     }
