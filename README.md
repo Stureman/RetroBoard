@@ -19,6 +19,13 @@ A modern Angular retroboard application for team retrospectives with real-time c
 - npm or yarn
 - Firebase project
 
+## Documentation
+
+- **[Quick Start Guide](QUICKSTART.md)** - Get up and running in 5 minutes
+- **[Setup Guide](SETUP.md)** - Detailed Firebase configuration instructions
+- **[Features](FEATURES.md)** - Complete feature list and technical details
+- **[Screenshots](SCREENSHOTS.md)** - Visual documentation of the UI
+
 ## Setup
 
 1. Clone the repository:
