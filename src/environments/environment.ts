@@ -1,11 +1,12 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyDoUjMzvqeLKsGZSdS0e7_PMCdfJAldoPE",
+    authDomain: "retroboard-982bf.firebaseapp.com",
+    projectId: "retroboard-982bf",
+    storageBucket: "retroboard-982bf.firebasestorage.app",
+    messagingSenderId: "13207160119",
+    appId: "1:13207160119:web:1d3d66b36e7345602c86b2",
+    measurementId: "G-636J4WWYQM"
   }
 };
