@@ -10,11 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-auth-verify',
-  standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatProgressSpinnerModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  templateUrl: './auth-verify.component.html',
-  styleUrls: ['./auth-verify.component.scss']
+    selector: 'app-auth-verify',
+    imports: [CommonModule, FormsModule, MatCardModule, MatProgressSpinnerModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+    templateUrl: './auth-verify.component.html',
+    styleUrls: ['./auth-verify.component.scss']
 })
 export class AuthVerifyComponent implements OnInit {
   private authService = inject(AuthService);

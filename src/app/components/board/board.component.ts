@@ -19,24 +19,23 @@ import { Board, Lane, Card } from '../../models/board.model';
 import { AddLaneDialogComponent } from './add-lane-dialog/add-lane-dialog.component';
 
 @Component({
-  selector: 'app-board',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatChipsModule,
-    MatSlideToggleModule,
-    MatDialogModule,
-    MatSnackBarModule
-  ],
-  templateUrl: './board.component.html',
-  styleUrls: ['./board.component.scss']
+    selector: 'app-board',
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatCardModule,
+        MatButtonModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatChipsModule,
+        MatSlideToggleModule,
+        MatDialogModule,
+        MatSnackBarModule
+    ],
+    templateUrl: './board.component.html',
+    styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
