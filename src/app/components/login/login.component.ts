@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -13,15 +13,14 @@ import { AuthService } from '../../services/auth.service';
 @Component({
     selector: 'app-login',
     imports: [
-        CommonModule,
-        FormsModule,
-        MatCardModule,
-        MatButtonModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatProgressSpinnerModule,
-        MatSnackBarModule
-    ],
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule
+],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

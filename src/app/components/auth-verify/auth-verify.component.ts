@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-auth-verify',
-    imports: [CommonModule, FormsModule, MatCardModule, MatProgressSpinnerModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+    imports: [FormsModule, MatCardModule, MatProgressSpinnerModule, MatFormFieldModule, MatInputModule, MatButtonModule],
     templateUrl: './auth-verify.component.html',
     styleUrls: ['./auth-verify.component.scss']
 })

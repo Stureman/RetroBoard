@@ -14,57 +14,67 @@
 </mat-toolbar>
 
 <div class="board-container">
-  <div class="board-header" *ngIf="isAdmin && board">
-    <div class="admin-controls">
-      <mat-slide-toggle 
-        [(ngModel)]="board.cardsVisible" 
-        (change)="toggleVisibility()"
-        color="primary">
-        Cards Visible to All
-      </mat-slide-toggle>
-      <button mat-raised-button color="accent" (click)="openAddLaneDialog()">
-        <mat-icon>add</mat-icon>
-        Add Lane
-      </button>
+  @if (isAdmin && board) {
+    <div class="board-header">
+      <div class="admin-controls">
+        <mat-slide-toggle
+          [(ngModel)]="board.cardsVisible"
+          (change)="toggleVisibility()"
+          color="primary">
+          Cards Visible to All
+        </mat-slide-toggle>
+        <button mat-raised-button color="accent" (click)="openAddLaneDialog()">
+          <mat-icon>add</mat-icon>
+          Add Lane
+        </button>
+      </div>
     </div>
-  </div>
+  }
 
   <div class="lanes-container">
-    <div class="lane" *ngFor="let lane of board?.lanes">
-      <mat-card class="lane-card">
-        <mat-card-header>
-          <mat-card-title>{{ lane.name }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="cards-list">
-            <mat-card class="card" *ngFor="let card of getCardsForLane(lane.id)">
-              <mat-card-content *ngIf="shouldShowCard(card)">
-                <p>{{ card.text }}</p>
-                <small class="author" *ngIf="isAdmin || board?.cardsVisible">
-                  - {{ card.authorEmail }}
-                </small>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          <div class="add-card">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Add a card</mat-label>
-              <textarea 
-                matInput 
-                [(ngModel)]="newCardTexts[lane.id]"
-                rows="3"
+    @for (lane of board?.lanes; track lane) {
+      <div class="lane">
+        <mat-card class="lane-card">
+          <mat-card-header>
+            <mat-card-title>{{ lane.name }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="cards-list">
+              @for (card of getCardsForLane(lane.id); track card) {
+                <mat-card class="card">
+                  @if (shouldShowCard(card)) {
+                    <mat-card-content>
+                      <p>{{ card.text }}</p>
+                      @if (isAdmin || board?.cardsVisible) {
+                        <small class="author">
+                          - {{ card.authorEmail }}
+                        </small>
+                      }
+                    </mat-card-content>
+                  }
+                </mat-card>
+              }
+            </div>
+            <div class="add-card">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Add a card</mat-label>
+                <textarea
+                  matInput
+                  [(ngModel)]="newCardTexts[lane.id]"
+                  rows="3"
                 placeholder="Enter your feedback..."></textarea>
-            </mat-form-field>
-            <button 
-              mat-raised-button 
-              color="primary" 
-              (click)="addCard(lane.id)"
-              [disabled]="!newCardTexts[lane.id] || !newCardTexts[lane.id].trim()">
-              Add Card
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
+              </mat-form-field>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="addCard(lane.id)"
+                [disabled]="!newCardTexts[lane.id] || !newCardTexts[lane.id].trim()">
+                Add Card
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
   </div>
 </div>

@@ -1,29 +1,33 @@
 <div class="verify-container">
   <mat-card class="verify-card">
     <mat-card-content>
-      <ng-container *ngIf="verifying">
+      @if (verifying) {
         <mat-spinner diameter="50"></mat-spinner>
         <p>Verifying your magic link...</p>
-      </ng-container>
-      <ng-container *ngIf="!verifying && !error && !needsEmail">
+      }
+      @if (!verifying && !error && !needsEmail) {
         <p class="success">✓ Successfully signed in!</p>
         <p>Redirecting to home...</p>
-      </ng-container>
-      <ng-container *ngIf="needsEmail">
+      }
+      @if (needsEmail) {
         <p>We couldn't find your email for this device. Please confirm your email to finish signing in.</p>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input matInput type="email" [(ngModel)]="email" placeholder="your@email.com" />
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="submitEmail()" [disabled]="submitting || !email">
-          <span *ngIf="!submitting">Confirm and Continue</span>
-          <mat-spinner *ngIf="submitting" diameter="20"></mat-spinner>
+          @if (!submitting) {
+            <span>Confirm and Continue</span>
+          }
+          @if (submitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          }
         </button>
-      </ng-container>
-      <ng-container *ngIf="error">
+      }
+      @if (error) {
         <p class="error">Failed to verify magic link.</p>
         <p>Please try logging in again.</p>
-      </ng-container>
+      }
     </mat-card-content>
   </mat-card>
 </div>

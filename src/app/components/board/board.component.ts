@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -21,19 +21,18 @@ import { AddLaneDialogComponent } from './add-lane-dialog/add-lane-dialog.compon
 @Component({
     selector: 'app-board',
     imports: [
-        CommonModule,
-        FormsModule,
-        MatCardModule,
-        MatButtonModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatChipsModule,
-        MatSlideToggleModule,
-        MatDialogModule,
-        MatSnackBarModule
-    ],
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatChipsModule,
+    MatSlideToggleModule,
+    MatDialogModule,
+    MatSnackBarModule
+],
     templateUrl: './board.component.html',
     styleUrls: ['./board.component.scss']
 })

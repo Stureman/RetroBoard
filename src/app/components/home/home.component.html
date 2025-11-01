@@ -1,15 +1,14 @@
 <mat-toolbar color="primary">
   <span>Retroboard</span>
   <span class="spacer"></span>
-  <ng-container *ngIf="user$ | async as user; else loginButton">
+  @if (user$ | async; as user) {
     <span>{{ user.email }}</span>
     <button mat-icon-button (click)="logout()">
       <mat-icon>logout</mat-icon>
     </button>
-  </ng-container>
-  <ng-template #loginButton>
+  } @else {
     <button mat-button (click)="navigateToLogin()">Login</button>
-  </ng-template>
+  }
 </mat-toolbar>
 
 <div class="container">
