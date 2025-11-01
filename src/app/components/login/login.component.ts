@@ -42,9 +42,18 @@ export class LoginComponent {
     try {
       await this.authService.sendMagicLink(this.email);
       this.linkSent = true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending magic link:', error);
-      this.snackBar.open('Failed to send magic link. Please try again.', 'Close', { duration: 5000 });
+      const code = error?.code as string | undefined;
+      let message = 'Failed to send magic link. Please try again.';
+      if (code === 'auth/configuration-not-found') {
+        message = 'Email link sign-in isn\'t enabled or configured. Please enable Email link in Firebase Auth and add your domain to Authorized domains.';
+      } else if (code === 'auth/invalid-continue-uri' || code === 'auth/unauthorized-continue-uri') {
+        message = 'The redirect URL is invalid or not authorized. Add your site domain to Firebase Authorized domains.';
+      } else if (code === 'auth/operation-not-allowed') {
+        message = 'Email sign-in provider is disabled. Enable it in Firebase Auth > Sign-in method.';
+      }
+      this.snackBar.open(message, 'Close', { duration: 7000 });
     } finally {
       this.loading = false;
     }

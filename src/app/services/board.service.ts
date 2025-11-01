@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, query, where, orderBy, Timestamp, CollectionReference, DocumentReference } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, query, where, orderBy, Timestamp, CollectionReference, DocumentReference, serverTimestamp } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { collectionData, docData } from '@angular/fire/firestore';
 import { Board, Lane, Card } from '../models/board.model';
@@ -19,7 +19,7 @@ export class BoardService {
     return code;
   }
 
-  async createBoard(name: string, creatorEmail: string): Promise<string> {
+  async createBoard(name: string, creatorEmail: string): Promise<{ id: string; code: string }> {
     const code = this.generateBoardCode();
     const defaultLanes: Lane[] = [
       { id: '1', name: 'Good', order: 0 },
@@ -33,11 +33,12 @@ export class BoardService {
       creatorEmail,
       lanes: defaultLanes,
       cardsVisible: false,
-      createdAt: Timestamp.now()
+      // Use server timestamp for consistency with security rules and ordering
+      createdAt: serverTimestamp()
     };
 
     const docRef = await addDoc(collection(this.firestore, 'boards'), boardData);
-    return docRef.id;
+    return { id: docRef.id, code };
   }
 
   async getBoardByCode(code: string): Promise<Board | null> {
@@ -58,8 +59,9 @@ export class BoardService {
   }
 
   getBoardById(boardId: string): Observable<Board | undefined> {
-    const boardRef = doc(this.firestore, `boards/${boardId}`) as any;
-    return docData(boardRef, { idField: 'id' }) as Observable<Board | undefined>;
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
+    // Use any here to avoid type brand mismatch between nested @firebase versions
+    return docData(boardRef as any, { idField: 'id' }) as Observable<Board | undefined>;
   }
 
   async updateBoard(boardId: string, updates: Partial<Board>): Promise<void> {

@@ -42,19 +42,17 @@ export class HomeComponent {
 
   async createBoard() {
     if (!this.boardName.trim()) return;
-    
-    const user = this.authService.getCurrentUser();
+    // Ensure we have the authenticated user from the stream (avoids race conditions)
+    const user = await firstValueFrom(this.user$);
     if (!user || !user.email) {
       this.router.navigate(['/login']);
       return;
     }
 
     try {
-      const boardId = await this.boardService.createBoard(this.boardName, user.email);
-      const board = await firstValueFrom(this.boardService.getBoardById(boardId));
-      if (board) {
-        this.router.navigate(['/board', board.code]);
-      }
+      const created = await this.boardService.createBoard(this.boardName.trim(), user.email);
+      // Navigate directly using the code we generated; BoardComponent will live-subscribe to updates
+      this.router.navigate(['/board', created.code]);
     } catch (error) {
       console.error('Error creating board:', error);
       this.snackBar.open('Error creating board. Please try again.', 'Close', { duration: 3000 });
