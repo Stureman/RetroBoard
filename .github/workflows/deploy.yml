@@ -39,6 +39,12 @@ jobs:
       - name: Build
         run: npm run build -- --configuration production
 
+      - name: Verify build output
+        run: |
+          echo "Listing dist/retroboard contents:" && ls -la ./dist/retroboard || true
+          test -f ./dist/retroboard/index.html && echo "index.html found" || (echo "index.html missing" && exit 1)
+          echo "First 5 lines of index.html:" && head -n 5 ./dist/retroboard/index.html || true
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
