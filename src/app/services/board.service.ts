@@ -1,7 +1,8 @@
-import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, query, where, orderBy, Timestamp, CollectionReference, DocumentReference, serverTimestamp } from '@angular/fire/firestore';
+import { Injectable, inject, EnvironmentInjector, runInInjectionContext } from '@angular/core';
+import { Firestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, query, where, Timestamp, CollectionReference, DocumentReference, serverTimestamp } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { collectionData, docData } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
 import { Board, Lane, Card } from '../models/board.model';
 
 @Injectable({
@@ -9,6 +10,7 @@ import { Board, Lane, Card } from '../models/board.model';
 })
 export class BoardService {
   private firestore: Firestore = inject(Firestore);
+  private envInjector = inject(EnvironmentInjector);
 
   generateBoardCode(): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -42,9 +44,9 @@ export class BoardService {
   }
 
   async getBoardByCode(code: string): Promise<Board | null> {
-    const boardsRef = collection(this.firestore, 'boards');
-    const q = query(boardsRef, where('code', '==', code));
-    const querySnapshot = await getDocs(q);
+  const boardsRef = collection(this.firestore, 'boards');
+  const q = query(boardsRef, where('code', '==', code));
+  const querySnapshot = await runInInjectionContext(this.envInjector, () => getDocs(q));
     
     if (querySnapshot.empty) {
       return null;
@@ -60,18 +62,19 @@ export class BoardService {
 
   getBoardById(boardId: string): Observable<Board | undefined> {
     const boardRef = doc(this.firestore, `boards/${boardId}`);
-    // Use any here to avoid type brand mismatch between nested @firebase versions
-    return docData(boardRef as any, { idField: 'id' }) as Observable<Board | undefined>;
+    return runInInjectionContext(this.envInjector, () =>
+      docData(boardRef as any, { idField: 'id' }) as Observable<Board | undefined>
+    );
   }
 
   async updateBoard(boardId: string, updates: Partial<Board>): Promise<void> {
     const boardRef = doc(this.firestore, `boards/${boardId}`);
-    await updateDoc(boardRef, updates);
+    await runInInjectionContext(this.envInjector, () => updateDoc(boardRef, updates));
   }
 
   async addLane(boardId: string, laneName: string): Promise<void> {
     const boardRef = doc(this.firestore, `boards/${boardId}`);
-    const boardSnap = await getDoc(boardRef);
+    const boardSnap = await runInInjectionContext(this.envInjector, () => getDoc(boardRef));
     
     if (boardSnap.exists()) {
       const board = boardSnap.data() as Board;
@@ -81,15 +84,15 @@ export class BoardService {
         order: board.lanes.length
       };
       
-      await updateDoc(boardRef, {
-        lanes: [...board.lanes, newLane]
-      });
+      await runInInjectionContext(this.envInjector, () =>
+        updateDoc(boardRef, { lanes: [...board.lanes, newLane] })
+      );
     }
   }
 
   async toggleCardsVisibility(boardId: string, visible: boolean): Promise<void> {
     const boardRef = doc(this.firestore, `boards/${boardId}`);
-    await updateDoc(boardRef, { cardsVisible: visible });
+    await runInInjectionContext(this.envInjector, () => updateDoc(boardRef, { cardsVisible: visible }));
   }
 
   async addCard(boardId: string, laneId: string, text: string, authorEmail: string): Promise<void> {
@@ -98,16 +101,34 @@ export class BoardService {
       laneId,
       text,
       authorEmail,
-      createdAt: Timestamp.now()
+      createdAt: serverTimestamp()
     };
     
-    await addDoc(collection(this.firestore, 'cards'), cardData);
+    await runInInjectionContext(this.envInjector, () => addDoc(collection(this.firestore, 'cards'), cardData));
+  }
+
+  async updateCard(cardId: string, updates: Partial<Card>): Promise<void> {
+    const cardRef = doc(this.firestore, `cards/${cardId}`);
+    await runInInjectionContext(this.envInjector, () => updateDoc(cardRef, updates as any));
   }
 
   getCards(boardId: string): Observable<Card[]> {
     const cardsRef = collection(this.firestore, 'cards');
-    const q = query(cardsRef, where('boardId', '==', boardId), orderBy('createdAt', 'asc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Card[]>;
+    // Avoid requiring a composite index by not ordering server-side; sort client-side instead
+    const q = query(cardsRef, where('boardId', '==', boardId));
+    return runInInjectionContext(this.envInjector, () =>
+      (collectionData(q, { idField: 'id' }) as Observable<any[]>)
+        .pipe(
+          map(cards => cards
+            .slice()
+            .sort((a, b) => {
+              const ta = a?.createdAt?.toMillis ? a.createdAt.toMillis() : (a?.createdAt?.seconds ? a.createdAt.seconds * 1000 : 0);
+              const tb = b?.createdAt?.toMillis ? b.createdAt.toMillis() : (b?.createdAt?.seconds ? b.createdAt.seconds * 1000 : 0);
+              return ta - tb;
+            })
+          )
+        ) as Observable<Card[]>
+    );
   }
 
   isAdmin(board: Board, userEmail: string | null): boolean {

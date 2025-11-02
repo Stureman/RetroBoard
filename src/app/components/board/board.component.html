@@ -19,7 +19,7 @@
       <div class="admin-controls">
         <mat-slide-toggle
           [(ngModel)]="board.cardsVisible"
-          (change)="toggleVisibility()"
+          (change)="toggleVisibility($event.checked)"
           color="primary">
           Cards Visible to All
         </mat-slide-toggle>
@@ -32,26 +32,48 @@
   }
 
   <div class="lanes-container">
-    @for (lane of board?.lanes; track lane) {
-      <div class="lane">
+    @for (lane of board?.lanes; track lane.id) {
+      <div class="lane" cdkDropList (cdkDropListDropped)="dropCard($event, lane)">
         <mat-card class="lane-card">
           <mat-card-header>
             <mat-card-title>{{ lane.name }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <div class="cards-list">
-              @for (card of getCardsForLane(lane.id); track card) {
-                <mat-card class="card">
-                  @if (shouldShowCard(card)) {
-                    <mat-card-content>
-                      <p>{{ card.text }}</p>
-                      @if (isAdmin || board?.cardsVisible) {
-                        <small class="author">
-                          - {{ card.authorEmail }}
-                        </small>
+              @for (card of getCardsForLane(lane.id); track card.id) {
+                <mat-card class="card"
+                  cdkDrag [cdkDragData]="card" [cdkDragDisabled]="!canEdit(card)"
+                  [ngStyle]="{ 'background-color': getColorForEmail(card.authorEmail), 'color': getTextColorForBackground(getColorForEmail(card.authorEmail)) }">
+                  <mat-card-content>
+                    @if (editingCardId === card.id) {
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Edit card</mat-label>
+                        <textarea matInput [(ngModel)]="editingText" rows="3"></textarea>
+                      </mat-form-field>
+                      <div class="card-actions">
+                        <button mat-button color="primary" (click)="saveEdit(card)">Save</button>
+                        <button mat-button (click)="cancelEdit()">Cancel</button>
+                      </div>
+                    } @else {
+                      @if (shouldRevealText(card)) {
+                        <p>{{ card.text }}</p>
+                      } @else {
+                        <div class="blurred-lines" aria-label="Hidden card content">
+                          <div class="line" style="width: 90%"></div>
+                          <div class="line" style="width: 100%"></div>
+                          <div class="line" style="width: 75%"></div>
+                        </div>
                       }
-                    </mat-card-content>
-                  }
+                      @if (isAdmin || board?.cardsVisible) {
+                        <small class="author">- {{ card.authorEmail }}</small>
+                      }
+                      @if (canEdit(card)) {
+                        <button mat-icon-button (click)="startEdit(card)" aria-label="Edit card">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                      }
+                    }
+                  </mat-card-content>
                 </mat-card>
               }
             </div>

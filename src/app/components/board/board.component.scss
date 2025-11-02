@@ -97,6 +97,19 @@
         color: #666;
         font-size: 0.85rem;
       }
+
+      .blurred-lines {
+        display: grid;
+        gap: 8px;
+        margin: 0 0 0.5rem 0;
+
+        .line {
+          height: 12px;
+          border-radius: 6px;
+          background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.16) 37%, rgba(0,0,0,0.08) 63%);
+          filter: blur(2px);
+        }
+      }
     }
   }
 }

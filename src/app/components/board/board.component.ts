@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +13,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BoardService } from '../../services/board.service';
@@ -21,6 +23,7 @@ import { AddLaneDialogComponent } from './add-lane-dialog/add-lane-dialog.compon
 @Component({
     selector: 'app-board',
     imports: [
+  CommonModule,
     FormsModule,
     MatCardModule,
     MatButtonModule,
@@ -31,7 +34,8 @@ import { AddLaneDialogComponent } from './add-lane-dialog/add-lane-dialog.compon
     MatChipsModule,
     MatSlideToggleModule,
     MatDialogModule,
-    MatSnackBarModule
+  MatSnackBarModule,
+  DragDropModule
 ],
     templateUrl: './board.component.html',
     styleUrls: ['./board.component.scss']
@@ -50,6 +54,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   isAdmin = false;
   currentUserEmail: string | null = null;
   newCardTexts: { [laneId: string]: string } = {};
+  editingCardId: string | null = null;
+  editingText: string = '';
 
   async ngOnInit() {
     const code = this.route.snapshot.paramMap.get('code');
@@ -97,7 +103,8 @@ export class BoardComponent implements OnInit, OnDestroy {
     return this.cards.filter(card => card.laneId === laneId);
   }
 
-  shouldShowCard(card: Card): boolean {
+  // Whether the current viewer should see the card's text (content)
+  shouldRevealText(card: Card): boolean {
     if (this.isAdmin) return true;
     if (this.board?.cardsVisible) return true;
     return card.authorEmail === this.currentUserEmail;
@@ -115,11 +122,66 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
-  async toggleVisibility() {
+  canEdit(card: Card): boolean {
+    return !!this.currentUserEmail && card.authorEmail === this.currentUserEmail;
+  }
+
+  startEdit(card: Card) {
+    if (!this.canEdit(card)) return;
+    this.editingCardId = card.id;
+    this.editingText = card.text;
+  }
+
+  cancelEdit() {
+    this.editingCardId = null;
+    this.editingText = '';
+  }
+
+  async saveEdit(card: Card) {
+    if (!this.editingCardId || !this.editingText.trim()) return;
+    try {
+      await this.boardService.updateCard(card.id, { text: this.editingText.trim() } as any);
+      this.cancelEdit();
+    } catch (error) {
+      console.error('Error updating card:', error);
+    }
+  }
+
+  async dropCard(event: CdkDragDrop<Card[]>, lane: Lane) {
+    // Only handle cross-lane moves; ordering within lane is not persisted
+    const card: Card | undefined = event.item.data as any;
+    if (!card || card.laneId === lane.id) return;
+    // Only authors can move their cards (per security rules)
+    if (!this.canEdit(card)) return;
+    try {
+      await this.boardService.updateCard(card.id, { laneId: lane.id } as any);
+    } catch (error) {
+      console.error('Error moving card:', error);
+    }
+  }
+
+  getColorForEmail(email: string): string {
+    // Deterministic pastel HSL from email
+    let hash = 0;
+    for (let i = 0; i < email.length; i++) {
+      hash = (hash * 31 + email.charCodeAt(i)) >>> 0;
+    }
+    const hue = hash % 360;
+    const sat = 70; // percent
+    const light = 88; // percent, keep readable
+    return `hsl(${hue} ${sat}% ${light}%)`;
+  }
+
+  getTextColorForBackground(bg: string): string {
+    // For light pastels, dark text works
+    return '#222';
+  }
+
+  async toggleVisibility(checked: boolean) {
     if (!this.board || !this.isAdmin) return;
 
     try {
-      await this.boardService.toggleCardsVisibility(this.board.id, !this.board.cardsVisible);
+      await this.boardService.toggleCardsVisibility(this.board.id, checked);
     } catch (error) {
       console.error('Error toggling visibility:', error);
     }
