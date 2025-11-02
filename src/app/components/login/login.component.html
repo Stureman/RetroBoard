@@ -18,16 +18,16 @@
       }
     </mat-card-content>
     <mat-card-actions>
-      @if (!linkSent) {
-        <button mat-raised-button color="primary" (click)="sendMagicLink()" [disabled]="loading">
-          @if (!loading) {
-            <span>Send Magic Link</span>
-          }
-          @if (loading) {
-            <mat-spinner diameter="20"></mat-spinner>
-          }
-        </button>
-      }
+      <button mat-raised-button color="primary" (click)="sendMagicLink()" [disabled]="loading || remainingSeconds > 0">
+        @if (!loading) {
+          <span>
+            @if (remainingSeconds > 0) { Resend in {{ remainingSeconds }}s } @else { {{ linkSent ? 'Resend Magic Link' : 'Send Magic Link' }} }
+          </span>
+        }
+        @if (loading) {
+          <mat-spinner diameter="20"></mat-spinner>
+        }
+      </button>
       <button mat-button (click)="goHome()">Back to Home</button>
     </mat-card-actions>
   </mat-card>
