@@ -36,11 +36,12 @@
     </mat-card>
   }
 
-  <div class="lanes-container">
+  <div class="lanes-container" cdkDropList [cdkDropListData]="board?.lanes || []" (cdkDropListDropped)="dropLane($event)">
     @for (lane of board?.lanes; track lane.id) {
+      <div class="lane-draggable" cdkDrag [cdkDragDisabled]="!isAdmin" [cdkDragData]="lane">
       <div class="lane" cdkDropList [id]="'lane-'+lane.id" [cdkDropListConnectedTo]="laneDropListIds" (cdkDropListDropped)="dropCard($event, lane)">
         <mat-card class="lane-card">
-          <mat-card-header>
+          <mat-card-header cdkDragHandle>
             @if (editingLaneId === lane.id) {
               <ng-container matCardTitle>
                 <div class="lane-edit">
@@ -169,6 +170,7 @@
             </div>
           </mat-card-content>
         </mat-card>
+      </div>
       </div>
     }
   </div>

@@ -16,7 +16,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
-import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BoardService } from '../../services/board.service';
@@ -189,6 +189,22 @@ export class BoardComponent implements OnInit, OnDestroy {
       await this.boardService.updateCard(card.id, { laneId: lane.id } as any);
     } catch (error) {
       console.error('Error moving card:', error);
+    }
+  }
+
+  async dropLane(event: CdkDragDrop<Lane[]>) {
+    if (!this.board || !this.isAdmin || !this.board.lanes) return;
+    const prev = event.previousIndex;
+    const curr = event.currentIndex;
+    if (prev === curr) return;
+    const updated = [...this.board.lanes];
+    moveItemInArray(updated, prev, curr);
+    const reindexed = updated.map((l, idx) => ({ ...l, order: idx }));
+    try {
+      await this.boardService.updateBoard(this.board.id, { lanes: reindexed } as any);
+    } catch (error) {
+      console.error('Error reordering lanes:', error);
+      this.snackBar.open('Failed to reorder lanes', 'Close', { duration: 3000 });
     }
   }
 

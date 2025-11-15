@@ -84,6 +84,18 @@
   min-width: 320px;
 }
 
+.lane-draggable {
+  /* Keep size during drag */
+  &.cdk-drag-placeholder {
+    opacity: 0;
+  }
+  &.cdk-drag-preview {
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    border-radius: 8px;
+  }
+}
+
 .lane-card {
   height: 100%;
   display: flex;
