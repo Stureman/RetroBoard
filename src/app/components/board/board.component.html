@@ -36,7 +36,31 @@
       <div class="lane" cdkDropList (cdkDropListDropped)="dropCard($event, lane)">
         <mat-card class="lane-card">
           <mat-card-header>
-            <mat-card-title>{{ lane.name }}</mat-card-title>
+            @if (editingLaneId === lane.id) {
+              <div class="lane-edit">
+                <mat-form-field appearance="outline" class="lane-name-input">
+                  <input matInput [(ngModel)]="editingLaneName" (keyup.enter)="saveEditLane(lane)" (keyup.escape)="cancelEditLane()">
+                </mat-form-field>
+                <button mat-icon-button color="primary" (click)="saveEditLane(lane)" aria-label="Save lane name">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button (click)="cancelEditLane()" aria-label="Cancel">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            } @else {
+              <mat-card-title>{{ lane.name }}</mat-card-title>
+              @if (isAdmin) {
+                <div class="lane-actions">
+                  <button mat-icon-button (click)="startEditLane(lane)" aria-label="Edit lane name">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteLane(lane)" aria-label="Delete lane">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+            }
           </mat-card-header>
           <mat-card-content>
             <div class="cards-list">

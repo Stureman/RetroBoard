@@ -56,6 +56,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   newCardTexts: { [laneId: string]: string } = {};
   editingCardId: string | null = null;
   editingText: string = '';
+  editingLaneId: string | null = null;
+  editingLaneName: string = '';
 
   async ngOnInit() {
     const code = this.route.snapshot.paramMap.get('code');
@@ -201,6 +203,46 @@ export class BoardComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  startEditLane(lane: Lane) {
+    if (!this.isAdmin) return;
+    this.editingLaneId = lane.id;
+    this.editingLaneName = lane.name;
+  }
+
+  cancelEditLane() {
+    this.editingLaneId = null;
+    this.editingLaneName = '';
+  }
+
+  async saveEditLane(lane: Lane) {
+    if (!this.editingLaneId || !this.editingLaneName.trim() || !this.board) return;
+    try {
+      await this.boardService.updateLane(this.board.id, lane.id, this.editingLaneName.trim());
+      this.cancelEditLane();
+    } catch (error) {
+      console.error('Error updating lane:', error);
+    }
+  }
+
+  async deleteLane(lane: Lane) {
+    if (!this.board || !this.isAdmin) return;
+
+    const cardsInLane = this.getCardsForLane(lane.id).length;
+    const message = cardsInLane > 0 
+      ? `Delete "${lane.name}" and its ${cardsInLane} card(s)?`
+      : `Delete lane "${lane.name}"?`;
+
+    if (!confirm(message)) return;
+
+    try {
+      await this.boardService.deleteLane(this.board.id, lane.id);
+      this.snackBar.open('Lane deleted', 'Close', { duration: 2000 });
+    } catch (error) {
+      console.error('Error deleting lane:', error);
+      this.snackBar.open('Failed to delete lane', 'Close', { duration: 3000 });
+    }
   }
 
   copyBoardCode() {

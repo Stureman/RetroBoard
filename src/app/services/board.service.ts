@@ -1,5 +1,5 @@
 import { Injectable, inject, EnvironmentInjector, runInInjectionContext } from '@angular/core';
-import { Firestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, query, where, Timestamp, CollectionReference, DocumentReference, serverTimestamp } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, Timestamp, CollectionReference, DocumentReference, serverTimestamp } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { collectionData, docData } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
@@ -88,6 +88,51 @@ export class BoardService {
         updateDoc(boardRef, { lanes: [...board.lanes, newLane] })
       );
     }
+  }
+
+  async updateLane(boardId: string, laneId: string, newName: string): Promise<void> {
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
+    const boardSnap = await runInInjectionContext(this.envInjector, () => getDoc(boardRef));
+    
+    if (boardSnap.exists()) {
+      const board = boardSnap.data() as Board;
+      const updatedLanes = board.lanes.map(lane => 
+        lane.id === laneId ? { ...lane, name: newName } : lane
+      );
+      
+      await runInInjectionContext(this.envInjector, () =>
+        updateDoc(boardRef, { lanes: updatedLanes })
+      );
+    }
+  }
+
+  async deleteLane(boardId: string, laneId: string): Promise<void> {
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
+    const boardSnap = await runInInjectionContext(this.envInjector, () => getDoc(boardRef));
+    
+    if (boardSnap.exists()) {
+      const board = boardSnap.data() as Board;
+      const updatedLanes = board.lanes.filter(lane => lane.id !== laneId);
+      
+      await runInInjectionContext(this.envInjector, () =>
+        updateDoc(boardRef, { lanes: updatedLanes })
+      );
+      
+      // Delete all cards in this lane
+      await this.deleteCardsByLaneId(boardId, laneId);
+    }
+  }
+
+  async deleteCardsByLaneId(boardId: string, laneId: string): Promise<void> {
+    const cardsRef = collection(this.firestore, 'cards');
+    const q = query(cardsRef, where('boardId', '==', boardId), where('laneId', '==', laneId));
+    const querySnapshot = await runInInjectionContext(this.envInjector, () => getDocs(q));
+    
+    const deletePromises = querySnapshot.docs.map(cardDoc => 
+      runInInjectionContext(this.envInjector, () => deleteDoc(cardDoc.ref))
+    );
+    
+    await Promise.all(deletePromises);
   }
 
   async toggleCardsVisibility(boardId: string, visible: boolean): Promise<void> {
