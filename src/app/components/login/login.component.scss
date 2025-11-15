@@ -18,6 +18,30 @@
   mat-card-content {
     padding-top: 1rem;
 
+    .google-button {
+      margin-bottom: 1rem;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: #999;
+
+      &::before,
+      &::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+      }
+
+      span {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
     .description {
       margin-bottom: 1.5rem;
       color: #666;

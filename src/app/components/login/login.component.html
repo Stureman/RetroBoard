@@ -4,6 +4,19 @@
       <mat-card-title>Sign in to Retroboard</mat-card-title>
     </mat-card-header>
     <mat-card-content>
+      <button mat-raised-button color="accent" class="google-button full-width" (click)="signInWithGoogle()" [disabled]="loadingGoogle">
+        @if (!loadingGoogle) {
+          <span>Sign in with Google</span>
+        }
+        @if (loadingGoogle) {
+          <mat-spinner diameter="20"></mat-spinner>
+        }
+      </button>
+      
+      <div class="divider">
+        <span>or</span>
+      </div>
+      
       @if (!linkSent) {
         <p class="description">Enter your email to receive a magic link for sign in</p>
         <mat-form-field appearance="outline" class="full-width">

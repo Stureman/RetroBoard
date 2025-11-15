@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, signOut, user } from '@angular/fire/auth';
+import { Auth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, signOut, user, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { User } from '@angular/fire/auth';
 import { environment } from '../../environments/environment';
@@ -56,6 +56,11 @@ export class AuthService {
     } else {
       throw new Error('Invalid or expired magic link');
     }
+  }
+
+  async signInWithGoogle(): Promise<void> {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(this.auth, provider);
   }
 
   async signOut(): Promise<void> {

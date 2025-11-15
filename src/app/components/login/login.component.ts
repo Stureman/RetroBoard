@@ -31,6 +31,7 @@ export class LoginComponent implements OnDestroy {
 
   email = '';
   loading = false;
+  loadingGoogle = false;
   linkSent = false;
   // Cooldown to prevent burning through email-link quota
   private static readonly COOLDOWN_SECONDS = 60; // adjust as desired
@@ -108,6 +109,28 @@ export class LoginComponent implements OnDestroy {
       this.snackBar.open(message, 'Close', { duration: 7000 });
     } finally {
       this.loading = false;
+    }
+  }
+
+  async signInWithGoogle() {
+    this.loadingGoogle = true;
+    try {
+      await this.authService.signInWithGoogle();
+      this.router.navigate(['/home']);
+    } catch (error: any) {
+      console.error('Error signing in with Google:', error);
+      const code = error?.code as string | undefined;
+      let message = 'Failed to sign in with Google. Please try again.';
+      if (code === 'auth/popup-closed-by-user') {
+        message = 'Sign-in popup was closed. Please try again.';
+      } else if (code === 'auth/popup-blocked') {
+        message = 'Popup was blocked by your browser. Please allow popups and try again.';
+      } else if (code === 'auth/operation-not-allowed') {
+        message = 'Google sign-in is disabled. Please contact the administrator.';
+      }
+      this.snackBar.open(message, 'Close', { duration: 5000 });
+    } finally {
+      this.loadingGoogle = false;
     }
   }
 
