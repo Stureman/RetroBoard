@@ -252,6 +252,7 @@
 
     mat-card-content {
       padding: 12px 14px;
+      position: relative;
       
       .card-header {
         display: flex;
@@ -275,12 +276,12 @@
           width: 28px;
           height: 28px;
           padding: 4px;
-          margin: -6px -6px 0 0;
+          margin-left: 4px;
           flex-shrink: 0;
           color: inherit !important;
-          background: rgba(255, 255, 255, 0.3);
+          background: transparent;
           border-radius: 50%;
-          transition: all 0.2s;
+          transition: background 0.2s, transform 0.2s;
           
           mat-icon {
             font-size: 20px;
@@ -291,8 +292,8 @@
           }
           
           &:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(1.05);
           }
         }
       }
