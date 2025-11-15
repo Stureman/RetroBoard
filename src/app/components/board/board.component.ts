@@ -138,6 +138,14 @@ export class BoardComponent implements OnInit, OnDestroy {
     if (!this.canEdit(card)) return;
     this.editingCardId = card.id;
     this.editingText = card.text;
+    // Focus textarea after view updates
+    setTimeout(() => {
+      const textarea = document.querySelector('.card-text-input') as HTMLTextAreaElement;
+      if (textarea) {
+        textarea.focus();
+        textarea.select();
+      }
+    }, 0);
   }
 
   cancelEdit() {

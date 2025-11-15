@@ -89,34 +89,52 @@
                   [ngStyle]="{ 'background-color': getColorForEmail(card.authorEmail), 'color': getTextColorForBackground(getColorForEmail(card.authorEmail)) }">
                   <mat-card-content>
                     @if (editingCardId === card.id) {
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Edit card</mat-label>
-                        <textarea matInput [(ngModel)]="editingText" rows="3"></textarea>
-                      </mat-form-field>
-                      <div class="card-actions">
-                        <button mat-button color="primary" (click)="saveEdit(card)">Save</button>
-                        <button mat-button (click)="cancelEdit()">Cancel</button>
+                      <div class="card-edit">
+                        <textarea 
+                          class="card-text-input"
+                          [(ngModel)]="editingText" 
+                          rows="3"
+                          (keyup.escape)="cancelEdit()"
+                          #cardInput></textarea>
+                        <div class="card-edit-actions">
+                          <button mat-button color="primary" (click)="saveEdit(card)">
+                            <mat-icon>check</mat-icon>
+                            Save
+                          </button>
+                          <button mat-button (click)="cancelEdit()">
+                            <mat-icon>close</mat-icon>
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     } @else {
-                      <div class="card-text">
-                        @if (shouldRevealText(card)) {
-                          <p>{{ card.text }}</p>
-                        } @else {
-                          <div class="blurred-lines" aria-label="Hidden card content">
-                            <div class="line" style="width: 90%"></div>
-                            <div class="line" style="width: 100%"></div>
-                            <div class="line" style="width: 75%"></div>
-                          </div>
+                      <div class="card-header">
+                        <div class="card-text">
+                          @if (shouldRevealText(card)) {
+                            <p>{{ card.text }}</p>
+                          } @else {
+                            <div class="blurred-lines" aria-label="Hidden card content">
+                              <div class="line" style="width: 90%"></div>
+                              <div class="line" style="width: 100%"></div>
+                              <div class="line" style="width: 75%"></div>
+                            </div>
+                          }
+                        </div>
+                        @if (canEdit(card)) {
+                          <button mat-icon-button class="card-menu-btn" [matMenuTriggerFor]="cardMenu" (click)="$event.stopPropagation()">
+                            <mat-icon>more_vert</mat-icon>
+                          </button>
+                          <mat-menu #cardMenu="matMenu">
+                            <button mat-menu-item (click)="startEdit(card)">
+                              <mat-icon>edit</mat-icon>
+                              <span>Edit Card</span>
+                            </button>
+                          </mat-menu>
                         }
                       </div>
                       <div class="card-footer">
                         @if (isAdmin || board?.cardsVisible) {
                           <small class="author">{{ card.authorEmail }}</small>
-                        }
-                        @if (canEdit(card)) {
-                          <button mat-icon-button class="edit-btn" (click)="startEdit(card)" matTooltip="Edit card">
-                            <mat-icon>edit</mat-icon>
-                          </button>
                         }
                       </div>
                     }
