@@ -101,47 +101,68 @@
   mat-card-header {
     background: linear-gradient(135deg, var(--mat-primary-main, #3f51b5) 0%, var(--mat-primary-dark, #303f9f) 100%);
     color: white;
-    padding: 14px 16px;
+    padding: 16px 24px 16px 30px; /* align with card feel, extra left breathing room */
     margin: -16px -16px 0 -16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     min-height: 56px;
+    gap: 8px;
 
-    mat-card-title {
-      font-size: 1.125rem;
-      font-weight: 500;
-      margin: 0;
-      letter-spacing: 0.25px;
+    /* Align title container and keep actions on the right */
+    .mat-mdc-card-header-text {
       display: flex;
       align-items: center;
       gap: 10px;
-      
-      .lane-title-text {
-        flex-shrink: 0;
-      }
-      
-      .card-count-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 22px;
-        height: 22px;
-        padding: 0 6px;
-        border-radius: 11px;
-        background: rgba(255, 255, 255, 0.95);
-        color: var(--mat-primary-main, #3f51b5);
-        font-size: 0.75rem;
-        font-weight: 700;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-        line-height: 1;
-      }
+      margin: 0;
+      flex: 1;
+      min-width: 0; /* prevent overflow */
+      padding: 0;
+    }
+
+    .mat-mdc-card-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      letter-spacing: 0.25px;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px; /* extra space between title and count badge */
+      min-width: 0;
+      line-height: 1.4;
+    }
+
+    .lane-title-text {
+      flex-shrink: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
+
+    .card-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--mat-primary-main, #3f51b5);
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      line-height: 1;
+      margin-left: 10px;
     }
 
     button {
       color: white;
       transition: transform 0.2s, opacity 0.2s;
+      align-self: center;
+      margin-left: 4px;
       
       &:hover {
         transform: scale(1.1);
@@ -250,6 +271,13 @@
       transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* Make placeholder invisible but preserve space to keep layout stable */
+    &.cdk-drag-placeholder {
+      opacity: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
     mat-card-content {
       padding: 12px 14px;
       position: relative;
@@ -350,6 +378,13 @@
       }
     }
   }
+}
+
+/* Also hide any placeholder element rendered at list root */
+.cards-list .cdk-drag-placeholder {
+  opacity: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .add-card {
