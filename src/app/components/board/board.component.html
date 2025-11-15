@@ -38,54 +38,56 @@
 
   <div class="lanes-container">
     @for (lane of board?.lanes; track lane.id) {
-      <div class="lane" cdkDropList (cdkDropListDropped)="dropCard($event, lane)">
+      <div class="lane" cdkDropList [id]="'lane-'+lane.id" [cdkDropListConnectedTo]="laneDropListIds" (cdkDropListDropped)="dropCard($event, lane)">
         <mat-card class="lane-card">
           <mat-card-header>
             @if (editingLaneId === lane.id) {
-              <mat-card-title class="lane-edit">
-                <input 
-                  class="lane-name-input" 
-                  [(ngModel)]="editingLaneName" 
-                  (keyup.enter)="saveEditLane(lane)" 
-                  (keyup.escape)="cancelEditLane()"
-                  (blur)="saveEditLane(lane)"
-                  #laneInput>
-                <button mat-icon-button class="edit-action-btn" (click)="saveEditLane(lane)" matTooltip="Save">
-                  <mat-icon>check</mat-icon>
-                </button>
-                <button mat-icon-button class="edit-action-btn" (click)="cancelEditLane()" matTooltip="Cancel">
-                  <mat-icon>close</mat-icon>
-                </button>
-              </mat-card-title>
+              <ng-container matCardTitle>
+                <div class="lane-edit">
+                  <input 
+                    class="lane-name-input" 
+                    [(ngModel)]="editingLaneName" 
+                    (keyup.enter)="saveEditLane(lane)" 
+                    (keyup.escape)="cancelEditLane()"
+                    (blur)="saveEditLane(lane)"
+                    #laneInput>
+                  <button mat-icon-button class="edit-action-btn" (click)="saveEditLane(lane)" matTooltip="Save">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button mat-icon-button class="edit-action-btn" (click)="cancelEditLane()" matTooltip="Cancel">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </ng-container>
             } @else {
-              <mat-card-title>
+              <ng-container matCardTitle>
                 <span class="lane-title-text">{{ lane.name }}</span>
                 @if (getCardsForLane(lane.id).length > 0) {
                   <span class="card-count-badge">{{ getCardsForLane(lane.id).length }}</span>
                 }
-              </mat-card-title>
-              @if (isAdmin) {
-                <button mat-icon-button [matMenuTriggerFor]="laneMenu" matTooltip="Lane options">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #laneMenu="matMenu">
-                  <button mat-menu-item (click)="startEditLane(lane)">
-                    <mat-icon>edit</mat-icon>
-                    <span>Rename Lane</span>
-                  </button>
-                  <button mat-menu-item (click)="deleteLane(lane)">
-                    <mat-icon color="warn">delete</mat-icon>
-                    <span>Delete Lane</span>
-                  </button>
-                </mat-menu>
-              }
+              </ng-container>
             }
+            @if (isAdmin && editingLaneId !== lane.id) {
+              <button mat-icon-button [matMenuTriggerFor]="laneMenu" matTooltip="Lane options">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            }
+            <mat-menu #laneMenu="matMenu">
+              <button mat-menu-item (click)="startEditLane(lane)">
+                <mat-icon>edit</mat-icon>
+                <span>Rename Lane</span>
+              </button>
+              <button mat-menu-item (click)="deleteLane(lane)">
+                <mat-icon color="warn">delete</mat-icon>
+                <span>Delete Lane</span>
+              </button>
+            </mat-menu>
           </mat-card-header>
           <mat-card-content>
             <div class="cards-list">
               @for (card of getCardsForLane(lane.id); track card.id) {
                 <mat-card class="card"
-                  cdkDrag [cdkDragData]="card" [cdkDragDisabled]="!canEdit(card)"
+                  cdkDrag [cdkDragData]="card" [cdkDragDisabled]="!(canEdit(card) || isAdmin)"
                   [ngStyle]="{ 'background-color': getColorForEmail(card.authorEmail), 'color': getTextColorForBackground(getColorForEmail(card.authorEmail)) }">
                   <mat-card-content>
                     @if (editingCardId === card.id) {

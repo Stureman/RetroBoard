@@ -7,13 +7,9 @@
     </mat-card-header>
     <mat-card-content>
       <button mat-raised-button color="accent" class="google-button full-width" (click)="signInWithGoogle()" [disabled]="loadingGoogle">
-        @if (!loadingGoogle) {
-          <mat-icon>login</mat-icon>
-          <span>Sign in with Google</span>
-        }
-        @if (loadingGoogle) {
-          <mat-spinner diameter="20"></mat-spinner>
-        }
+        @if (!loadingGoogle) { <mat-icon matButtonIcon>login</mat-icon> }
+        @if (!loadingGoogle) { <span>Sign in with Google</span> }
+        @if (loadingGoogle) { <mat-spinner diameter="20"></mat-spinner> }
       </button>
       
       <mat-divider class="auth-divider">

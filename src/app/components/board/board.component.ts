@@ -64,6 +64,7 @@ export class BoardComponent implements OnInit, OnDestroy {
   editingText: string = '';
   editingLaneId: string | null = null;
   editingLaneName: string = '';
+  laneDropListIds: string[] = [];
 
   async ngOnInit() {
     const code = this.route.snapshot.paramMap.get('code');
@@ -84,6 +85,7 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
 
     this.isAdmin = this.boardService.isAdmin(this.board, this.currentUserEmail);
+    this.updateLaneDropListIds();
 
     // Subscribe to board updates
     this.boardService.getBoardById(this.board.id)
@@ -91,6 +93,7 @@ export class BoardComponent implements OnInit, OnDestroy {
       .subscribe(board => {
         if (board) {
           this.board = board;
+          this.updateLaneDropListIds();
         }
       });
 
@@ -167,8 +170,8 @@ export class BoardComponent implements OnInit, OnDestroy {
     // Only handle cross-lane moves; ordering within lane is not persisted
     const card: Card | undefined = event.item.data as any;
     if (!card || card.laneId === lane.id) return;
-    // Only authors can move their cards (per security rules)
-    if (!this.canEdit(card)) return;
+    // Authors can move their own cards; admins can move all
+    if (!(this.isAdmin || this.canEdit(card))) return;
     try {
       await this.boardService.updateCard(card.id, { laneId: lane.id } as any);
     } catch (error) {
@@ -217,6 +220,10 @@ export class BoardComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  private updateLaneDropListIds() {
+    this.laneDropListIds = (this.board?.lanes || []).map(l => `lane-${l.id}`);
   }
 
   startEditLane(lane: Lane) {
