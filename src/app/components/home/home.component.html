@@ -17,6 +17,40 @@
     <p>Make retro free again.</p>
   </div>
 
+  @if (user$ | async; as user) {
+    <div class="my-boards-section">
+      <h2>My Boards</h2>
+      @if (loadingBoards) {
+        <div class="loading-boards">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      } @else if (userBoards.length > 0) {
+        <mat-card class="boards-list-card">
+          <mat-list>
+            @for (board of userBoards; track board.id) {
+              <mat-list-item (click)="navigateToBoard(board.code)" class="board-item">
+                <div class="board-info">
+                  <h3>{{ board.name }}</h3>
+                  <div class="board-meta">
+                    <span class="board-code">Code: {{ board.code }}</span>
+                    @if (board.creatorEmail === user.email) {
+                      <span class="owner-badge">Owner</span>
+                    }
+                  </div>
+                </div>
+                <mat-icon>chevron_right</mat-icon>
+              </mat-list-item>
+            }
+          </mat-list>
+        </mat-card>
+      } @else {
+        <mat-card class="empty-boards">
+          <p>You haven't joined any boards yet. Create or join one below!</p>
+        </mat-card>
+      }
+    </div>
+  }
+
   <div class="actions">
     <mat-card class="action-card">
       <mat-card-header>

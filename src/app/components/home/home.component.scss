@@ -24,6 +24,83 @@
   }
 }
 
+.my-boards-section {
+  margin-bottom: 3rem;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #3f51b5;
+  }
+
+  .loading-boards {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .boards-list-card {
+    mat-list {
+      padding: 0;
+    }
+
+    .board-item {
+      cursor: pointer;
+      border-bottom: 1px solid #e0e0e0;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .board-info {
+        flex: 1;
+
+        h3 {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.1rem;
+          color: #333;
+        }
+
+        .board-meta {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+
+          .board-code {
+            font-size: 0.9rem;
+            color: #666;
+            font-family: monospace;
+          }
+
+          .owner-badge {
+            background: #3f51b5;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+          }
+        }
+      }
+
+      mat-icon {
+        color: #999;
+      }
+    }
+  }
+
+  .empty-boards {
+    padding: 2rem;
+    text-align: center;
+    color: #666;
+  }
+}
+
 .actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

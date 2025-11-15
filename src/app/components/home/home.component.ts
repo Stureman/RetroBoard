@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,9 +9,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BoardService } from '../../services/board.service';
+import { Board } from '../../models/board.model';
 
 @Component({
     selector: 'app-home',
@@ -24,12 +27,14 @@ import { BoardService } from '../../services/board.service';
         MatFormFieldModule,
         MatToolbarModule,
         MatIconModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatListModule,
+        MatProgressSpinnerModule
     ],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private authService = inject(AuthService);
   private boardService = inject(BoardService);
   private router = inject(Router);
@@ -38,6 +43,30 @@ export class HomeComponent {
   boardName = '';
   boardCode = '';
   user$ = this.authService.user$;
+  userBoards: Board[] = [];
+  loadingBoards = false;
+
+  async ngOnInit() {
+    // Load user's boards when they're signed in
+    this.user$.subscribe(async user => {
+      if (user?.email) {
+        await this.loadUserBoards(user.email);
+      } else {
+        this.userBoards = [];
+      }
+    });
+  }
+
+  async loadUserBoards(email: string) {
+    this.loadingBoards = true;
+    try {
+      this.userBoards = await this.boardService.getUserBoards(email);
+    } catch (error) {
+      console.error('Error loading boards:', error);
+    } finally {
+      this.loadingBoards = false;
+    }
+  }
 
   async createBoard() {
     if (!this.boardName.trim()) return;
@@ -82,6 +111,10 @@ export class HomeComponent {
 
   navigateToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  navigateToBoard(code: string) {
+    this.router.navigate(['/board', code]);
   }
 
   async logout() {

@@ -179,4 +179,55 @@ export class BoardService {
   isAdmin(board: Board, userEmail: string | null): boolean {
     return board.creatorEmail === userEmail;
   }
+
+  async getUserBoards(userEmail: string): Promise<Board[]> {
+    // Get boards created by user
+    const boardsRef = collection(this.firestore, 'boards');
+    const createdQuery = query(boardsRef, where('creatorEmail', '==', userEmail));
+    const createdSnapshot = await runInInjectionContext(this.envInjector, () => getDocs(createdQuery));
+    
+    const createdBoards = createdSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data()['createdAt']?.toDate()
+    })) as Board[];
+
+    // Get boards where user has added cards
+    const cardsRef = collection(this.firestore, 'cards');
+    const cardsQuery = query(cardsRef, where('authorEmail', '==', userEmail));
+    const cardsSnapshot = await runInInjectionContext(this.envInjector, () => getDocs(cardsQuery));
+    
+    // Get unique board IDs from cards
+    const boardIdsFromCards = new Set<string>();
+    cardsSnapshot.docs.forEach(doc => {
+      const boardId = doc.data()['boardId'];
+      if (boardId) boardIdsFromCards.add(boardId);
+    });
+
+    // Fetch boards where user has cards but didn't create
+    const participatedBoards: Board[] = [];
+    for (const boardId of boardIdsFromCards) {
+      // Skip if already in created boards
+      if (createdBoards.some(b => b.id === boardId)) continue;
+      
+      const boardRef = doc(this.firestore, `boards/${boardId}`);
+      const boardSnap = await runInInjectionContext(this.envInjector, () => getDoc(boardRef));
+      
+      if (boardSnap.exists()) {
+        participatedBoards.push({
+          id: boardSnap.id,
+          ...boardSnap.data(),
+          createdAt: boardSnap.data()['createdAt']?.toDate()
+        } as Board);
+      }
+    }
+
+    // Combine and sort by creation date (newest first)
+    const allBoards = [...createdBoards, ...participatedBoards];
+    return allBoards.sort((a, b) => {
+      const dateA = a.createdAt ? a.createdAt.getTime() : 0;
+      const dateB = b.createdAt ? b.createdAt.getTime() : 0;
+      return dateB - dateA;
+    });
+  }
 }
