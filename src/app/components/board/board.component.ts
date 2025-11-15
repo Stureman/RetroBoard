@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { FormsModule } from '@angular/forms';
@@ -215,6 +215,14 @@ export class BoardComponent implements OnInit, OnDestroy {
     if (!this.isAdmin) return;
     this.editingLaneId = lane.id;
     this.editingLaneName = lane.name;
+    // Focus input after view updates
+    setTimeout(() => {
+      const input = document.querySelector('.lane-name-input') as HTMLInputElement;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 0);
   }
 
   cancelEditLane() {

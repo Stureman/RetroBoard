@@ -42,17 +42,21 @@
         <mat-card class="lane-card">
           <mat-card-header>
             @if (editingLaneId === lane.id) {
-              <div class="lane-edit">
-                <mat-form-field appearance="outline" class="lane-name-input">
-                  <input matInput [(ngModel)]="editingLaneName" (keyup.enter)="saveEditLane(lane)" (keyup.escape)="cancelEditLane()">
-                </mat-form-field>
-                <button mat-icon-button color="primary" (click)="saveEditLane(lane)" matTooltip="Save">
+              <mat-card-title class="lane-edit">
+                <input 
+                  class="lane-name-input" 
+                  [(ngModel)]="editingLaneName" 
+                  (keyup.enter)="saveEditLane(lane)" 
+                  (keyup.escape)="cancelEditLane()"
+                  (blur)="saveEditLane(lane)"
+                  #laneInput>
+                <button mat-icon-button class="edit-action-btn" (click)="saveEditLane(lane)" matTooltip="Save">
                   <mat-icon>check</mat-icon>
                 </button>
-                <button mat-icon-button (click)="cancelEditLane()" matTooltip="Cancel">
+                <button mat-icon-button class="edit-action-btn" (click)="cancelEditLane()" matTooltip="Cancel">
                   <mat-icon>close</mat-icon>
                 </button>
-              </div>
+              </mat-card-title>
             } @else {
               <mat-card-title>
                 <span class="lane-title-text">{{ lane.name }}</span>
