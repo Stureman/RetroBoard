@@ -1,89 +1,143 @@
-<mat-toolbar color="primary">
-  <span>Retroboard</span>
+<mat-toolbar color="primary" class="toolbar-elevated">
+  <mat-icon class="toolbar-icon">dashboard</mat-icon>
+  <span class="toolbar-title">Retroboard</span>
   <span class="spacer"></span>
   @if (user$ | async; as user) {
-    <span>{{ user.email }}</span>
-    <button mat-icon-button (click)="logout()">
+    <span class="user-email">{{ user.email }}</span>
+    <button mat-icon-button (click)="logout()" matTooltip="Sign out" aria-label="Sign out">
       <mat-icon>logout</mat-icon>
     </button>
   } @else {
-    <button mat-button (click)="navigateToLogin()">Login</button>
+    <button mat-button (click)="navigateToLogin()">
+      <mat-icon>login</mat-icon>
+      Login
+    </button>
   }
 </mat-toolbar>
 
 <div class="container">
   <div class="hero">
-    <h1>Welcome to Retroboard</h1>
-    <p>Make retro free again.</p>
+    <h1 class="mat-headline-3">Welcome to Retroboard</h1>
+    <p class="mat-body-1">Make retro free again.</p>
   </div>
 
   @if (user$ | async; as user) {
-    <div class="my-boards-section">
-      <h2>My Boards</h2>
+    <section class="my-boards-section">
+      <div class="section-header">
+        <h2 class="mat-headline-5">My Boards</h2>
+        @if (userBoards.length > 0) {
+          <mat-chip>{{ userBoards.length }} {{ userBoards.length === 1 ? 'Board' : 'Boards' }}</mat-chip>
+        }
+      </div>
+      
       @if (loadingBoards) {
         <div class="loading-boards">
           <mat-spinner diameter="40"></mat-spinner>
+          <p class="mat-body-2">Loading your boards...</p>
         </div>
       } @else if (userBoards.length > 0) {
-        <mat-card class="boards-list-card">
+        <mat-card class="boards-list-card elevated-card">
           <mat-list>
             @for (board of userBoards; track board.id) {
               <mat-list-item (click)="navigateToBoard(board.code)" class="board-item">
-                <div class="board-info">
-                  <h3>{{ board.name }}</h3>
+                <mat-icon matListItemIcon class="board-icon">dashboard</mat-icon>
+                <div matListItemTitle class="board-info">
+                  <h3 class="board-name">{{ board.name }}</h3>
                   @if (board.creatorEmail === user.email) {
-                    <span class="owner-badge">Owner</span>
+                    <mat-chip class="owner-chip">Owner</mat-chip>
                   }
                 </div>
-                <div class="board-actions">
+                <div matListItemMeta class="board-actions">
                   @if (board.creatorEmail === user.email) {
-                    <button mat-icon-button color="warn" (click)="deleteBoard(board, $event)" aria-label="Delete board">
+                    <button 
+                      mat-icon-button 
+                      color="warn" 
+                      (click)="deleteBoard(board, $event)" 
+                      matTooltip="Delete board"
+                      aria-label="Delete board">
                       <mat-icon>delete</mat-icon>
                     </button>
                   }
-                  <mat-icon>chevron_right</mat-icon>
+                  <mat-icon class="nav-icon">chevron_right</mat-icon>
                 </div>
               </mat-list-item>
+              @if (!$last) {
+                <mat-divider></mat-divider>
+              }
             }
           </mat-list>
         </mat-card>
       } @else {
-        <mat-card class="empty-boards">
-          <p>You haven't joined any boards yet. Create or join one below!</p>
+        <mat-card class="empty-boards elevated-card">
+          <mat-icon class="empty-icon">dashboard_customize</mat-icon>
+          <h3 class="mat-headline-6">No boards yet</h3>
+          <p class="mat-body-1">Create your first board or join an existing one to get started!</p>
         </mat-card>
       }
-    </div>
+    </section>
+
+    <mat-divider class="section-divider"></mat-divider>
   }
 
-  <div class="actions">
-    <mat-card class="action-card">
+  <section class="actions">
+    <mat-card class="action-card elevated-card">
       <mat-card-header>
+        <mat-icon mat-card-avatar>add_circle</mat-icon>
         <mat-card-title>Create New Board</mat-card-title>
+        <mat-card-subtitle>Start a new retrospective session</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Board Name</mat-label>
-          <input matInput [(ngModel)]="boardName" placeholder="Sprint 42 Retrospective">
+          <input 
+            matInput 
+            [(ngModel)]="boardName" 
+            placeholder="Sprint 42 Retrospective"
+            (keyup.enter)="createBoard()">
+          <mat-icon matSuffix>edit</mat-icon>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="createBoard()">Create Board</button>
+      <mat-card-actions align="end">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="createBoard()"
+          [disabled]="!boardName.trim()">
+          <mat-icon>add</mat-icon>
+          Create Board
+        </button>
       </mat-card-actions>
     </mat-card>
 
-    <mat-card class="action-card">
+    <mat-card class="action-card elevated-card">
       <mat-card-header>
+        <mat-icon mat-card-avatar>group_add</mat-icon>
         <mat-card-title>Join Existing Board</mat-card-title>
+        <mat-card-subtitle>Enter a 6-character board code</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Board Code</mat-label>
-          <input matInput [(ngModel)]="boardCode" placeholder="ABC123" maxlength="6">
+          <input 
+            matInput 
+            [(ngModel)]="boardCode" 
+            placeholder="ABC123" 
+            maxlength="6"
+            (keyup.enter)="joinBoard()"
+            style="text-transform: uppercase;">
+          <mat-icon matSuffix>vpn_key</mat-icon>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions>
-        <button mat-raised-button color="accent" (click)="joinBoard()">Join Board</button>
+      <mat-card-actions align="end">
+        <button 
+          mat-raised-button 
+          color="accent" 
+          (click)="joinBoard()"
+          [disabled]="!boardCode.trim()">
+          <mat-icon>login</mat-icon>
+          Join Board
+        </button>
       </mat-card-actions>
     </mat-card>
-  </div>
+  </section>
 </div>

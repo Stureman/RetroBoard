@@ -6,6 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth.service';
@@ -18,6 +20,8 @@ import { AuthService } from '../../services/auth.service';
     MatButtonModule,
     MatInputModule,
     MatFormFieldModule,
+    MatIconModule,
+    MatDividerModule,
     MatProgressSpinnerModule,
     MatSnackBarModule
 ],

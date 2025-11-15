@@ -11,6 +11,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { BoardService } from '../../services/board.service';
@@ -29,7 +32,10 @@ import { Board } from '../../models/board.model';
         MatIconModule,
         MatSnackBarModule,
         MatListModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatChipsModule,
+        MatTooltipModule,
+        MatDividerModule
     ],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']

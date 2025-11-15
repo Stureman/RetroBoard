@@ -1,5 +1,31 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+// Global CSS Variables and Theme Extensions
+:root {
+  --spacing-unit: 8px;
+  --spacing-xs: calc(var(--spacing-unit) * 1); // 8px
+  --spacing-sm: calc(var(--spacing-unit) * 2); // 16px
+  --spacing-md: calc(var(--spacing-unit) * 3); // 24px
+  --spacing-lg: calc(var(--spacing-unit) * 4); // 32px
+  --spacing-xl: calc(var(--spacing-unit) * 6); // 48px
+  
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 350ms;
+  
+  --mat-success-main: #4caf50;
+  --mat-success-light: #81c784;
+  --mat-success-dark: #388e3c;
+  
+  --mat-primary-main: #3f51b5;
+  --mat-primary-light: #5c6bc0;
+  --mat-primary-dark: #303f9f;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,4 +38,82 @@ html, body {
 
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #fafafa;
+}
+
+// Utility Classes
+.full-width {
+  width: 100%;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.m-xs { margin: var(--spacing-xs); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+
+// Material Component Overrides
+.mat-mdc-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  transition: box-shadow var(--transition-normal);
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+.mat-mdc-button,
+.mat-mdc-raised-button {
+  transition: all var(--transition-fast) !important;
+}
+
+// Responsive Breakpoints
+@mixin mobile {
+  @media (max-width: 599px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 600px) and (max-width: 959px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 960px) {
+    @content;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

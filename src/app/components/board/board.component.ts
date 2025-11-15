@@ -11,6 +11,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
@@ -33,6 +36,9 @@ import { AddLaneDialogComponent } from './add-lane-dialog/add-lane-dialog.compon
     MatIconModule,
     MatChipsModule,
     MatSlideToggleModule,
+    MatMenuModule,
+    MatBadgeModule,
+    MatTooltipModule,
     MatDialogModule,
   MatSnackBarModule,
   DragDropModule

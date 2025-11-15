@@ -1,11 +1,14 @@
 <div class="login-container">
   <mat-card class="login-card">
     <mat-card-header>
-      <mat-card-title>Sign in to Retroboard</mat-card-title>
+      <mat-icon class="header-icon">lock_open</mat-icon>
+      <mat-card-title class="mat-headline-5">Sign in to Retroboard</mat-card-title>
+      <mat-card-subtitle>Choose your preferred sign-in method</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <button mat-raised-button color="accent" class="google-button full-width" (click)="signInWithGoogle()" [disabled]="loadingGoogle">
         @if (!loadingGoogle) {
+          <mat-icon>login</mat-icon>
           <span>Sign in with Google</span>
         }
         @if (loadingGoogle) {
@@ -13,24 +16,33 @@
         }
       </button>
       
-      <div class="divider">
-        <span>or</span>
-      </div>
+      <mat-divider class="auth-divider">
+        <span class="divider-text">or</span>
+      </mat-divider>
       
       @if (!linkSent) {
-        <p class="description">Enter your email to receive a magic link for sign in</p>
+        <p class="description mat-body-1">
+          <mat-icon class="description-icon">mail</mat-icon>
+          Enter your email to receive a magic link for sign in
+        </p>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
           <input matInput type="email" [(ngModel)]="email" placeholder="your@email.com">
+          <mat-icon matPrefix>email</mat-icon>
         </mat-form-field>
       } @else {
         <div class="success-message">
-          <p><strong>Magic link sent!</strong></p>
-          <p>Check your email and click the link to sign in.</p>
+          <mat-icon class="success-icon">check_circle</mat-icon>
+          <p class="mat-headline-6">Magic link sent!</p>
+          <p class="mat-body-1">Check your email and click the link to sign in.</p>
         </div>
       }
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions align="end">
+      <button mat-button (click)="goHome()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Home
+      </button>
       <button mat-raised-button color="primary" (click)="sendMagicLink()" [disabled]="loading || remainingSeconds > 0">
         @if (!loading) {
           <span>
@@ -41,7 +53,6 @@
           <mat-spinner diameter="20"></mat-spinner>
         }
       </button>
-      <button mat-button (click)="goHome()">Back to Home</button>
     </mat-card-actions>
   </mat-card>
 </div>

@@ -6,9 +6,14 @@
   cursor: pointer;
   background: rgba(255, 255, 255, 0.2);
   color: white;
+  transition: background 0.2s;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
   
   mat-icon {
-    margin-left: 0.5rem;
+    margin-left: 8px;
     font-size: 18px;
     height: 18px;
     width: 18px;
@@ -16,72 +21,139 @@
 }
 
 .board-container {
-  padding: 2rem;
+  padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.board-header {
-  margin-bottom: 2rem;
+.admin-controls-card {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%) !important;
+  border-left: 4px solid var(--mat-primary-main, #3f51b5);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  
+  mat-card-content {
+    padding: 16px;
+  }
+}
 
-  .admin-controls {
+.admin-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  
+  .control-group {
     display: flex;
-    gap: 1rem;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background: #f5f5f5;
-    border-radius: 8px;
-
+    gap: 16px;
+    flex: 1;
+    
+    mat-icon {
+      color: var(--mat-primary-main, #3f51b5);
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+    
     mat-slide-toggle {
-      flex: 1;
+      font-weight: 500;
+    }
+  }
+  
+  button {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    
+    mat-icon {
+      margin-right: 8px;
     }
   }
 }
 
 .lanes-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .lane {
-  min-width: 300px;
+  min-width: 320px;
 }
 
 .lane-card {
   height: 100%;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
 
   mat-card-header {
-    background: #3f51b5;
+    background: linear-gradient(135deg, var(--mat-primary-main, #3f51b5) 0%, var(--mat-primary-dark, #303f9f) 100%);
     color: white;
-    padding: 1rem;
+    padding: 14px 16px;
     margin: -16px -16px 0 -16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    min-height: 56px;
 
     mat-card-title {
-      font-size: 1.2rem;
+      font-size: 1.125rem;
+      font-weight: 500;
       margin: 0;
       flex: 1;
+      letter-spacing: 0.25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      .lane-title-text {
+        flex-shrink: 0;
+      }
+      
+      .card-count-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 22px;
+        height: 22px;
+        padding: 0 6px;
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--mat-primary-main, #3f51b5);
+        font-size: 0.75rem;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        line-height: 1;
+      }
     }
 
-    .lane-actions {
-      display: flex;
-      gap: 0.25rem;
-
-      button {
-        color: white;
+    button {
+      color: white;
+      transition: transform 0.2s, opacity 0.2s;
+      
+      &:hover {
+        transform: scale(1.1);
+        opacity: 0.9;
       }
     }
 
     .lane-edit {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 8px;
       width: 100%;
 
       .lane-name-input {
@@ -107,7 +179,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding-top: 1rem;
+    padding-top: 16px;
   }
 }
 
@@ -115,36 +187,128 @@
   flex: 1;
   overflow-y: auto;
   max-height: 500px;
-  margin-bottom: 1rem;
+  margin-bottom: 12px;
+  padding: 2px;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
 
   .card {
-    margin-bottom: 0.75rem;
+    margin-bottom: 10px;
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    cursor: grab;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    &.cdk-drag-preview {
+      cursor: grabbing;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15);
+      transform: rotate(2deg) scale(1.03);
+      opacity: 0.95;
+    }
+    
+    &.cdk-drag-animating {
+      transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
     mat-card-content {
-      padding: 1rem;
-
-      p {
-        margin: 0 0 0.5rem 0;
-        word-wrap: break-word;
+      padding: 12px 14px;
+      
+      .card-text {
+        margin-bottom: 8px;
+        
+        p {
+          margin: 0;
+          word-wrap: break-word;
+          line-height: 1.5;
+          font-size: 0.9375rem;
+          font-weight: 400;
+        }
       }
-
-      .author {
-        color: #666;
-        font-size: 0.85rem;
+      
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 4px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        
+        .author {
+          color: rgba(0, 0, 0, 0.5);
+          font-size: 0.75rem;
+          font-weight: 400;
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          
+          &::before {
+            content: '👤';
+            font-size: 0.65rem;
+            opacity: 0.7;
+          }
+        }
+        
+        .edit-btn {
+          opacity: 0;
+          transition: opacity 0.2s, transform 0.2s;
+          
+          &:hover {
+            transform: scale(1.15);
+          }
+        }
+      }
+      
+      &:hover .edit-btn {
+        opacity: 1;
       }
 
       .blurred-lines {
         display: grid;
         gap: 8px;
-        margin: 0 0 0.5rem 0;
+        padding: 2px 0;
 
         .line {
           height: 12px;
           border-radius: 6px;
-          background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.16) 37%, rgba(0,0,0,0.08) 63%);
+          background: linear-gradient(90deg, rgba(0,0,0,0.08) 25%, rgba(0,0,0,0.15) 37%, rgba(0,0,0,0.08) 63%);
           filter: blur(2px);
+          animation: shimmer 2.5s ease-in-out infinite;
+        }
+      }
+      
+      @keyframes shimmer {
+        0%, 100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.75;
         }
       }
     }
@@ -154,15 +318,47 @@
 .add-card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+  gap: 12px;
+  padding: 16px;
+  margin: 8px -16px -16px;
+  background: rgba(0, 0, 0, 0.015);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 
   .full-width {
     width: 100%;
+    
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      background: white;
+    }
   }
 
   button {
     align-self: flex-end;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    
+    &:not(:disabled) {
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+      }
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+  
+  button {
+    min-width: 80px;
+    font-weight: 500;
   }
 }
