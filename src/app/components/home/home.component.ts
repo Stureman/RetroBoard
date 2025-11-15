@@ -79,8 +79,13 @@ export class HomeComponent implements OnInit {
 
     try {
       const created = await this.boardService.createBoard(this.boardName.trim(), user.email);
-      // Navigate directly using the code we generated; BoardComponent will live-subscribe to updates
-      this.router.navigate(['/board', created.code]);
+      // Refresh the boards list and clear the form
+      await this.loadUserBoards(user.email);
+      this.boardName = '';
+      this.snackBar.open(`Board "${created.code}" created!`, 'Open', { duration: 4000 })
+        .onAction().subscribe(() => {
+          this.router.navigate(['/board', created.code]);
+        });
     } catch (error) {
       console.error('Error creating board:', error);
       this.snackBar.open('Error creating board. Please try again.', 'Close', { duration: 3000 });
@@ -115,6 +120,29 @@ export class HomeComponent implements OnInit {
 
   navigateToBoard(code: string) {
     this.router.navigate(['/board', code]);
+  }
+
+  async deleteBoard(board: Board, event: Event) {
+    event.stopPropagation(); // Prevent navigation when clicking delete
+
+    const user = await firstValueFrom(this.user$);
+    if (!user?.email || board.creatorEmail !== user.email) {
+      this.snackBar.open('Only the owner can delete this board', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const confirmed = confirm(`Delete board "${board.name}"? This will also delete all cards and cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      await this.boardService.deleteBoard(board.id);
+      // Refresh the boards list
+      await this.loadUserBoards(user.email);
+      this.snackBar.open('Board deleted', 'Close', { duration: 2000 });
+    } catch (error) {
+      console.error('Error deleting board:', error);
+      this.snackBar.open('Failed to delete board', 'Close', { duration: 3000 });
+    }
   }
 
   async logout() {

@@ -91,6 +91,12 @@
       mat-icon {
         color: #999;
       }
+
+      .board-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
     }
   }
 

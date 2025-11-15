@@ -230,4 +230,21 @@ export class BoardService {
       return dateB - dateA;
     });
   }
+
+  async deleteBoard(boardId: string): Promise<void> {
+    // Delete all cards in the board
+    const cardsRef = collection(this.firestore, 'cards');
+    const cardsQuery = query(cardsRef, where('boardId', '==', boardId));
+    const cardsSnapshot = await runInInjectionContext(this.envInjector, () => getDocs(cardsQuery));
+    
+    const deleteCardPromises = cardsSnapshot.docs.map(cardDoc => 
+      runInInjectionContext(this.envInjector, () => deleteDoc(cardDoc.ref))
+    );
+    
+    await Promise.all(deleteCardPromises);
+
+    // Delete the board itself
+    const boardRef = doc(this.firestore, `boards/${boardId}`);
+    await runInInjectionContext(this.envInjector, () => deleteDoc(boardRef));
+  }
 }

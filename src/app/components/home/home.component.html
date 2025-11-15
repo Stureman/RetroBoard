@@ -38,7 +38,14 @@
                     }
                   </div>
                 </div>
-                <mat-icon>chevron_right</mat-icon>
+                <div class="board-actions">
+                  @if (board.creatorEmail === user.email) {
+                    <button mat-icon-button color="warn" (click)="deleteBoard(board, $event)" aria-label="Delete board">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                  <mat-icon>chevron_right</mat-icon>
+                </div>
               </mat-list-item>
             }
           </mat-list>
