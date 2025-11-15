@@ -166,6 +166,19 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
+  async confirmDeleteCard(card: Card) {
+    if (!(this.isAdmin || this.canEdit(card))) return;
+    const ok = confirm('Delete this card?');
+    if (!ok) return;
+    try {
+      await this.boardService.deleteCard(card.id);
+      this.snackBar.open('Card deleted', 'Close', { duration: 2000 });
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      this.snackBar.open('Failed to delete card', 'Close', { duration: 3000 });
+    }
+  }
+
   async dropCard(event: CdkDragDrop<Card[]>, lane: Lane) {
     // Only handle cross-lane moves; ordering within lane is not persisted
     const card: Card | undefined = event.item.data as any;

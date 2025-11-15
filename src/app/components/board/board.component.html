@@ -122,14 +122,20 @@
                             </div>
                           }
                         </div>
-                        @if (canEdit(card)) {
+                        @if (canEdit(card) || isAdmin) {
                           <button mat-icon-button class="card-menu-btn" [matMenuTriggerFor]="cardMenu" (click)="$event.stopPropagation()">
                             <mat-icon>more_vert</mat-icon>
                           </button>
                           <mat-menu #cardMenu="matMenu">
-                            <button mat-menu-item (click)="startEdit(card)">
-                              <mat-icon>edit</mat-icon>
-                              <span>Edit Card</span>
+                            @if (canEdit(card)) {
+                              <button mat-menu-item (click)="startEdit(card)">
+                                <mat-icon>edit</mat-icon>
+                                <span>Edit Card</span>
+                              </button>
+                            }
+                            <button mat-menu-item (click)="confirmDeleteCard(card)">
+                              <mat-icon color="warn">delete</mat-icon>
+                              <span>Delete Card</span>
                             </button>
                           </mat-menu>
                         }

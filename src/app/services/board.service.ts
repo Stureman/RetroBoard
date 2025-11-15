@@ -157,6 +157,11 @@ export class BoardService {
     await runInInjectionContext(this.envInjector, () => updateDoc(cardRef, updates as any));
   }
 
+  async deleteCard(cardId: string): Promise<void> {
+    const cardRef = doc(this.firestore, `cards/${cardId}`);
+    await runInInjectionContext(this.envInjector, () => deleteDoc(cardRef));
+  }
+
   getCards(boardId: string): Observable<Card[]> {
     const cardsRef = collection(this.firestore, 'cards');
     // Avoid requiring a composite index by not ordering server-side; sort client-side instead
