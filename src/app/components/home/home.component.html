@@ -21,64 +21,6 @@
     <p class="mat-body-1">Make retro free again.</p>
   </div>
 
-  @if (user$ | async; as user) {
-    <section class="my-boards-section">
-      <div class="section-header">
-        <h2 class="mat-headline-5">My Boards</h2>
-        @if (userBoards.length > 0) {
-          <mat-chip>{{ userBoards.length }} {{ userBoards.length === 1 ? 'Board' : 'Boards' }}</mat-chip>
-        }
-      </div>
-      
-      @if (loadingBoards) {
-        <div class="loading-boards">
-          <mat-spinner diameter="40"></mat-spinner>
-          <p class="mat-body-2">Loading your boards...</p>
-        </div>
-      } @else if (userBoards.length > 0) {
-        <mat-card class="boards-list-card elevated-card">
-          <mat-list>
-            @for (board of userBoards; track board.id) {
-              <mat-list-item (click)="navigateToBoard(board.code)" class="board-item">
-                <mat-icon matListItemIcon class="board-icon">dashboard</mat-icon>
-                <div matListItemTitle class="board-info">
-                  <h3 class="board-name">{{ board.name }}</h3>
-                  @if (board.creatorEmail === user.email) {
-                    <mat-chip class="owner-chip">Owner</mat-chip>
-                  }
-                </div>
-                <div matListItemMeta class="board-actions">
-                  @if (board.creatorEmail === user.email) {
-                    <button 
-                      mat-icon-button 
-                      color="warn" 
-                      (click)="deleteBoard(board, $event)" 
-                      matTooltip="Delete board"
-                      aria-label="Delete board">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  }
-                  <mat-icon class="nav-icon">chevron_right</mat-icon>
-                </div>
-              </mat-list-item>
-              @if (!$last) {
-                <mat-divider></mat-divider>
-              }
-            }
-          </mat-list>
-        </mat-card>
-      } @else {
-        <mat-card class="empty-boards elevated-card">
-          <mat-icon class="empty-icon">dashboard_customize</mat-icon>
-          <h3 class="mat-headline-6">No boards yet</h3>
-          <p class="mat-body-1">Create your first board or join an existing one to get started!</p>
-        </mat-card>
-      }
-    </section>
-
-    <mat-divider class="section-divider"></mat-divider>
-  }
-
   <section class="actions">
     <mat-card class="action-card elevated-card">
       <mat-card-header>
@@ -140,4 +82,62 @@
       </mat-card-actions>
     </mat-card>
   </section>
+
+  @if (user$ | async; as user) {
+    <mat-divider class="section-divider"></mat-divider>
+
+    <section class="my-boards-section">
+      <div class="section-header">
+        <h2 class="mat-headline-5">My Boards</h2>
+        @if (userBoards.length > 0) {
+          <mat-chip>{{ userBoards.length }} {{ userBoards.length === 1 ? 'Board' : 'Boards' }}</mat-chip>
+        }
+      </div>
+      
+      @if (loadingBoards) {
+        <div class="loading-boards">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p class="mat-body-2">Loading your boards...</p>
+        </div>
+      } @else if (userBoards.length > 0) {
+        <mat-card class="boards-list-card elevated-card">
+          <mat-list>
+            @for (board of userBoards; track board.id) {
+              <mat-list-item (click)="navigateToBoard(board.code)" class="board-item">
+                <mat-icon matListItemIcon class="board-icon">dashboard</mat-icon>
+                <div matListItemTitle class="board-info">
+                  <h3 class="board-name">{{ board.name }}</h3>
+                  @if (board.creatorEmail === user.email) {
+                    <mat-chip class="owner-chip">Owner</mat-chip>
+                  }
+                </div>
+                <div matListItemMeta class="board-actions">
+                  @if (board.creatorEmail === user.email) {
+                    <button 
+                      mat-icon-button 
+                      color="warn" 
+                      (click)="deleteBoard(board, $event)" 
+                      matTooltip="Delete board"
+                      aria-label="Delete board">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                  <mat-icon class="nav-icon">chevron_right</mat-icon>
+                </div>
+              </mat-list-item>
+              @if (!$last) {
+                <mat-divider></mat-divider>
+              }
+            }
+          </mat-list>
+        </mat-card>
+      } @else {
+        <mat-card class="empty-boards elevated-card">
+          <mat-icon class="empty-icon">dashboard_customize</mat-icon>
+          <h3 class="mat-headline-6">No boards yet</h3>
+          <p class="mat-body-1">Create your first board or join an existing one to get started!</p>
+        </mat-card>
+      }
+    </section>
+  }
 </div>
