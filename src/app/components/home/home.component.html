@@ -31,12 +31,9 @@
               <mat-list-item (click)="navigateToBoard(board.code)" class="board-item">
                 <div class="board-info">
                   <h3>{{ board.name }}</h3>
-                  <div class="board-meta">
-                    <span class="board-code">Code: {{ board.code }}</span>
-                    @if (board.creatorEmail === user.email) {
-                      <span class="owner-badge">Owner</span>
-                    }
-                  </div>
+                  @if (board.creatorEmail === user.email) {
+                    <span class="owner-badge">Owner</span>
+                  }
                 </div>
                 <div class="board-actions">
                   @if (board.creatorEmail === user.email) {
